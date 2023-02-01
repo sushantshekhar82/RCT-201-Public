@@ -12,51 +12,42 @@ import {
 import AddPost from "./AddPost";
 import Post from "./Post";
 import { getPosts } from "./posts.api";
+import useApi from "../customhook/useApi";
 
 const Posts = () => {
   const toast = useToast();
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [data, setData] = useState([]);
+ const {loading,success,execute,error,setData,data}=useApi(getPosts)
 
-  const getData = async () => {
-    try {
-      setLoading(true);
-      let data = await getPosts();
-      setData(data);
-      setSuccess(true);
-    } catch (e) {
+  
+    
+    const onAddPost = (post) => {
+      setData([...data, post]);
+    };
+    const onDelete = (id) => {
+      setData(data.filter((p) => p.id !== id));
+    };
+    
+    useEffect(() => {
+    if(error){
       toast({
         title: "Error Occurred while fetching data",
-        description: e.message,
+        description: error,
         status: "error",
         duration: 3000,
         isClosable: true,
         position: "top-right",
-      });
-      setSuccess(false);
-    } finally {
-      setLoading(false);
+      })
     }
-  };
-
-  const onAddPost = (post) => {
-    setData([...data, post]);
-  };
-  const onDelete = (id) => {
-    setData(data.filter((p) => p.id !== id));
-  };
-
-  useEffect(() => {
-    getData();
+      
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [error,toast]);
 
   return (
     <Box>
       <Center my={2} gap={4}>
         <Heading>Posts</Heading>
-        <Button isLoading={loading} loadingText="Fetching..." onClick={getData}>
+        <Button isLoading={loading} loadingText="Fetching..." onClick={execute}>
           Refresh
         </Button>
       </Center>
