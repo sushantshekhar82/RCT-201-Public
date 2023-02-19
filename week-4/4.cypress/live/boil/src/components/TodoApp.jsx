@@ -34,7 +34,7 @@ const TodoApp = () => {
         handleChange={handleChange}
         handleSubmit={handleSubmit}
       />
-      <TodoList todos={todos} />
+      <TodoList  todos={todos} />
     </div>
   );
 };
